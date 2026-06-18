@@ -1,0 +1,7 @@
+name: Copier update
+description: Run copier update for every layer, in the order declared in .copier/update-order.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: bash ${{ github.action_path }}/update.sh

@@ -1,0 +1,24 @@
+name: Update from template
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1" # every Monday at 9:00 UTC
+concurrency:
+  group: update-template
+  cancel-in-progress: true
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-nix
+      - uses: ./.github/actions/copier-update
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          title: "chore: update from base template"
+          branch: copier-update
+          commit-message: "chore: update from base template"

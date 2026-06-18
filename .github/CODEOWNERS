@@ -1,0 +1,5 @@
+# Code owners are automatically requested for review on pull requests.
+# Add owners per path, or set a default owner for the whole repository.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @{{github_owner}}

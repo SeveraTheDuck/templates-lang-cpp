@@ -1,0 +1,32 @@
+rules:
+  type:
+    level: error
+    options:
+      - build
+      - chore
+      - ci
+      - docs
+      - feat
+      - fix
+      - perf
+      - refactor
+      - revert
+      - style
+      - test
+  type-empty:
+    level: error
+  type-format:
+    level: error
+    format: ^[a-z]+$
+  scope-empty:
+    level: ignore
+  subject-empty:
+    level: error
+  description-empty:
+    level: error
+  description-max-length:
+    level: error
+    length: 72
+  body-max-length:
+    level: error
+    length: 1000

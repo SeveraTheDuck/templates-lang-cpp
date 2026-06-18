@@ -1,0 +1,7 @@
+name: Sync release to dev
+description: Restore release-please-managed files from main into the dev tree.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: bash ${{ github.action_path }}/sync.sh

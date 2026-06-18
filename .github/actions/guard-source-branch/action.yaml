@@ -1,0 +1,9 @@
+name: Guard source branch
+description: Enforce that PRs into main come from dev or release-please.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        HEAD_REF: ${{ github.head_ref }}
+      run: bash ${{ github.action_path }}/guard.sh

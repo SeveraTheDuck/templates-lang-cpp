@@ -1,0 +1,15 @@
+# === templates-base ===========================================================
+# -- Nix --
+result
+result-*
+.direnv/
+.pre-commit-config.yaml
+# -- Secrets --
+.env
+# -- OS / Editors --
+.DS_Store
+.idea/
+.vscode/
+*.sw[po]
+*~
+# === end templates-base =======================================================

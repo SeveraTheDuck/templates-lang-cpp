@@ -1,0 +1,4 @@
+# === templates-base ===========================================================
+[files]
+extend-exclude = ["*.lock", "LICENSES/", "CHANGELOG.md"]
+# === end templates-base =======================================================

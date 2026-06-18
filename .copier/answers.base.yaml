@@ -1,0 +1,8 @@
+# Changes here will be overwritten by Copier
+_commit: v1.1.1
+_src_path: gh:SeveraTheDuck/templates-base
+author: Alexander Antipov
+github_owner: SeveraTheDuck
+license: MIT
+project_description: Opinionated template for production-ready C++ pet-projects
+project_name: templates-lang-cpp

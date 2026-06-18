@@ -1,0 +1,21 @@
+name: SBOM
+description: Generate an SPDX SBOM and attach it to a release.
+inputs:
+  tag:
+    description: Release tag to attach the SBOM to.
+    required: true
+  token:
+    description: Token for gh release upload.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: anchore/sbom-action@v0
+      with:
+        format: spdx-json
+        output-file: sbom.spdx.json
+    - shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        TAG: ${{ inputs.tag }}
+      run: gh release upload "$TAG" sbom.spdx.json --clobber
