@@ -1,0 +1,66 @@
+{%- set project_name = _external_data.base.project_name -%}
+cmake_minimum_required(VERSION 3.28...3.31)
+
+# Version comes from version.txt (managed by release-please in the base layer).
+# Read it before project() so it feeds project(VERSION ...).
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION_RAW LIMIT_COUNT 1)
+
+project(
+  {{ project_name }}
+  VERSION ${PROJECT_VERSION_RAW}
+  LANGUAGES CXX
+)
+
+set(PROJECT_NAMESPACE "{{ cmake_namespace }}")
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(Options)
+
+set(CMAKE_CXX_STANDARD ${${PROJECT_NAME}_CXX_STANDARD})
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(CompilerCheck)
+include(Ccache)
+include(Lto)
+include(ProjectOptions)
+include(Sanitizers)
+include(Dependencies)
+
+check_compiler_versions()
+setup_ccache()
+setup_lto()
+setup_project_options()
+apply_sanitizers()
+
+# Generate <{{ project_name }}/version.hpp> into the build tree from version.txt.
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.hpp.in"
+  "${PROJECT_BINARY_DIR}/generated/{{ project_name }}/version.hpp"
+  @ONLY
+)
+
+include(CTest)
+
+add_subdirectory(source)
+
+if(BUILD_TESTING)
+  include(TestHelpers)
+  setup_gtest()
+  add_subdirectory(tests)
+endif()
+{%- if enable_profiling %}
+
+if(${PROJECT_NAME}_ENABLE_WORKLOADS)
+  add_subdirectory(workloads)
+endif()
+{%- endif %}
+
+# Symlink the compile database to the project root for clangd / clang-tidy.
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+  file(CREATE_LINK "${PROJECT_BINARY_DIR}/compile_commands.json"
+       "${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json" SYMBOLIC
+  )
+endif()

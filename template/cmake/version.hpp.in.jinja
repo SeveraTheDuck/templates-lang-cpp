@@ -1,0 +1,9 @@
+{%- set vp = _external_data.base.project_name | upper | replace('-', '_') -%}
+#pragma once
+
+// Generated from version.txt at configure time. Do not edit.
+
+#define {{ vp }}_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define {{ vp }}_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define {{ vp }}_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define {{ vp }}_VERSION_STRING "@PROJECT_VERSION@"
