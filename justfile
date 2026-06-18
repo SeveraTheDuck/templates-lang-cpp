@@ -9,5 +9,5 @@ import '.just/base.just'
 # === end templates-base imports ==============================================
 
 # === templates-lang-cpp imports ==============================================
-import '.just/cpp.justfile'
+import '.just/cpp.just'
 # === end templates-lang-cpp imports ==========================================
