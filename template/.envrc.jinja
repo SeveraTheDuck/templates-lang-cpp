@@ -1,0 +1,8 @@
+# Load secrets from .env if present
+dotenv_if_exists .env
+
+# Activate the primary compiler dev shell (pinned toolchain, hardening disabled
+# for sanitizers) -- matches CI. With `both`, this is `primary_compiler`; for a
+# single-compiler project it is that compiler. Use `nix develop .#<other>` for
+# the other one.
+use flake .#{% if compiler_matrix == 'both' %}{{ primary_compiler }}{% else %}{{ compiler_matrix }}{% endif %}
