@@ -7,3 +7,7 @@ default:
 # === templates-base imports ==================================================
 import '.just/base.just'
 # === end templates-base imports ==============================================
+
+# === templates-lang-cpp imports ==============================================
+import '.just/cpp.justfile'
+# === end templates-lang-cpp imports ==========================================
