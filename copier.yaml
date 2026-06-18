@@ -31,6 +31,14 @@ clang_version:
   help: "LLVM/Clang major version (maps to nixpkgs pkgs.llvmPackages_<N>)"
   default: "22"
   when: "{{ compiler_matrix in ['both', 'clang'] }}"
+primary_compiler:
+  type: str
+  help: "Primary compiler for the local dev shell loaded by direnv"
+  choices:
+    - gcc
+    - clang
+  default: gcc
+  when: "{{ compiler_matrix == 'both' }}"
 cmake_namespace:
   type: str
   help: "CMake export/alias namespace (the `name::` in `name::target`); not a C++ namespace"

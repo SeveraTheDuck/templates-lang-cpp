@@ -22,7 +22,7 @@
       [ valgrind ]
 {%- if enable_profiling %}
       ++ [
-        linuxPackages.perf
+        perf
         flamegraph
       ]
 {%- endif %}
