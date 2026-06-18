@@ -1,0 +1,28 @@
+# -- Per-compiler dev shells --------------------------------------------------
+# Named shells the CI matrix selects via `nix develop .#<compiler>`. They merge
+# by name and never touch base's devShells.default. The shell builder lives in
+# ./mkCppShell.nix.
+# perSystem module.
+
+{ config, pkgs, ... }:
+let
+  mkCppShell = import ./mkCppShell.nix { inherit pkgs config; };
+in
+{
+  devShells = {
+{%- if compiler_matrix in ['both', 'gcc'] %}
+    gcc = mkCppShell {
+      stdenv = pkgs.gcc{{ gcc_version }}Stdenv;
+      cc = "${pkgs.gcc{{ gcc_version }}}/bin/gcc";
+      cxx = "${pkgs.gcc{{ gcc_version }}}/bin/g++";
+    };
+{%- endif %}
+{%- if compiler_matrix in ['both', 'clang'] %}
+    clang = mkCppShell {
+      stdenv = pkgs.llvmPackages_{{ clang_version }}.stdenv;
+      cc = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang";
+      cxx = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang++";
+    };
+{%- endif %}
+  };
+}
