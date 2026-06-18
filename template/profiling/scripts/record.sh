@@ -30,5 +30,5 @@ mkdir -p "$results_dir"
 output="$results_dir/perf.data"
 
 echo "--- recording: $binary $*"
-perf record -F 997 --call-graph dwarf -o "$output" -- "$binary" "$@"
+perf record -F 997 --call-graph "${PERF_CALL_GRAPH:-dwarf}" -o "$output" -- "$binary" "$@"
 echo "--- saved: $output (analyze with flamegraph.sh / report.sh)"
