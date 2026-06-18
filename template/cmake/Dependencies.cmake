@@ -17,8 +17,9 @@ function(setup_gtest)
   message(STATUS "[${PROJECT_NAME}] Fetching GTest via FetchContent")
   FetchContent_Declare(
           googletest
-          URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.tar.gz
-          EXCLUDE_FROM_ALL SYSTEM
+          GIT_REPOSITORY https://github.com/google/googletest.git
+          GIT_TAG        v1.17.0
+          SYSTEM
   )
   FetchContent_MakeAvailable(googletest)
 endfunction()
