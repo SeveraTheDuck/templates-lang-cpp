@@ -15,6 +15,7 @@ function(setup_project_options)
     $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:
     -Wall
     -Wextra
+    -Werror
     -Wpedantic
     -Wconversion
     -Wshadow
