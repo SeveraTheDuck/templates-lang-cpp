@@ -1,0 +1,61 @@
+# --- Questions ----------------------------------------------------------------
+cpp_standard:
+  type: str
+  help: "C++ standard to target (one of: 17, 20, 23, 26)"
+  default: "20"
+  validator: "{% if cpp_standard not in ['17', '20', '23', '26'] %}cpp_standard must be one of: 17, 20, 23, 26{% endif %}"
+project_archetype:
+  type: str
+  help: "What this project produces"
+  choices:
+    - executable
+    - static-lib
+    - shared-lib
+    - header-only
+  default: executable
+compiler_matrix:
+  type: str
+  help: "Compilers to build and test against in CI"
+  choices:
+    - both
+    - gcc
+    - clang
+  default: both
+gcc_version:
+  type: str
+  help: "GCC major version (maps to nixpkgs pkgs.gcc<N>Stdenv)"
+  default: "16"
+  when: "{{ compiler_matrix in ['both', 'gcc'] }}"
+clang_version:
+  type: str
+  help: "LLVM/Clang major version (maps to nixpkgs pkgs.llvmPackages_<N>)"
+  default: "22"
+  when: "{{ compiler_matrix in ['both', 'clang'] }}"
+cmake_namespace:
+  type: str
+  help: "CMake export/alias namespace (the `name::` in `name::target`); not a C++ namespace"
+  default: "{{ _external_data.base.github_owner }}"
+  validator: "{% if not cmake_namespace %}cmake_namespace must not be empty{% endif %}"
+enable_sanitizers:
+  type: bool
+  help: "Provide ASan/UBSan and TSan build presets"
+  default: true
+enable_coverage:
+  type: bool
+  help: "Provide a coverage preset, `just coverage`, and Codecov upload in CI"
+  default: true
+enable_profiling:
+  type: bool
+  help: "Provide perf-based profiling workloads and flamegraph scripts (Linux only)"
+  default: false
+# --- Copier settings ----------------------------------------------------------
+_min_copier_version: "9.5.0"
+_subdirectory: template
+_answers_file: .copier/answers.cpp.yaml
+_external_data:
+  base: .copier/answers.base.yaml
+_migrations:
+  - command: bash .copier/post-migration.cpp.sh
+_exclude:
+  - "{% if not enable_profiling %}profiling{% endif %}"
+  - "{% if not enable_profiling %}workloads{% endif %}"
