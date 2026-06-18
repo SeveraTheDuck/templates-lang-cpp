@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Pre-commit clang-tidy wrapper.
+#   usage: clang-tidy.sh <clang-tidy-binary> [files...]
+#
+# Analyses staged C/C++ files against the root compile_commands.json (generated
+# by `just warmup`). Skips with a notice if the DB is absent -- a commit hook
+# cannot configure a build itself. The `-fgnuc-version` spoof keeps the Clang
+# frontend in sync with libstdc++ when the project is built with GCC.
+
+set -euo pipefail
+
+tidy="$1"
+shift
+
+[ "$#" -eq 0 ] && exit 0
+
+if [ ! -f compile_commands.json ]; then
+  echo "clang-tidy: compile_commands.json not found -- run 'just warmup'; skipping." >&2
+  exit 0
+fi
+
+exec "$tidy" -p . {% if compiler_matrix in ['both', 'gcc'] %}--extra-arg=-fgnuc-version={{ gcc_version }} {% endif %}"$@"
