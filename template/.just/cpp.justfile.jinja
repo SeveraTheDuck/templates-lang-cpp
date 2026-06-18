@@ -1,0 +1,39 @@
+# C++ recipes for {{ _external_data.base.project_name }} (imported by the root justfile).
+
+project := "{{ _external_data.base.project_name }}"
+
+# static analysis: clang-tidy over the dev compile database
+tidy: (build "dev")
+    run-clang-tidy -p build/dev{% if compiler_matrix in ['gcc', 'both'] %} -extra-arg=-fgnuc-version={{ gcc_version }}{% endif %} -quiet
+
+{% raw -%}
+# default preset for build / test
+preset := "dev"
+
+# configure dev: generates compile_commands.json + version.hpp for clangd
+warmup:
+    cmake --preset dev
+
+# configure + build a preset (default: dev)
+build preset=preset:
+    cmake --preset {{ preset }}
+    cmake --build --preset {{ preset }}
+
+# build + run the unit tests for a preset (default: dev)
+test preset=preset: (build preset)
+    ctest --preset {{ preset }}
+
+# build dev + run the executable
+run *args: (build "dev")
+    ./build/dev/source/{{ project }}/{{ project }} {{ args }}
+
+# remove all build directories
+clean:
+    rm -rf build
+{%- endraw %}
+{% if enable_profiling %}{% raw %}
+# build the profile preset + record a flamegraph for a workload
+# usage: just profile greeting  ->  build/profile/workloads/<project>_greeting_workload
+profile workload: (build "profile")
+    profiling/scripts/run.sh build/profile/workloads/{{ project }}_{{ workload }}_workload
+{%- endraw %}{% endif %}
