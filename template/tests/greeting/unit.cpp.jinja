@@ -1,0 +1,13 @@
+{%- set project_name = _external_data.base.project_name -%}
+{%- set ns = project_name | replace('-', '_') -%}
+#include <{{ project_name }}/greeting/greeting.hpp>
+
+#include <gtest/gtest.h>
+
+namespace {
+
+TEST(greeting, returns_hello) {
+  EXPECT_EQ({{ ns }}::greeting("world"), "Hello, world!");
+}
+
+}  // namespace

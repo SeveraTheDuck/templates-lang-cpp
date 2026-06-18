@@ -1,0 +1,9 @@
+{%- set project = _external_data.base.project_name -%}
+{
+  "suites": [
+    {
+      "label": "{{ project }}_greeting_unit",
+      "presets": ["dev"{% if enable_sanitizers %}, "dev-asan"{% endif %}]
+    }
+  ]
+}
