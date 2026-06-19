@@ -1,8 +1,8 @@
 include_guard(GLOBAL)
 
-# Adds the enabled sanitizers to the project_options INTERFACE target, so they
-# propagate consistently to every target that links it. Inconsistent sanitizer
-# flags across the link graph cause ODR violations and false/missed reports.
+# Adds the enabled sanitizers to the project_options INTERFACE target, so they propagate
+# consistently to every target that links it. Inconsistent sanitizer flags across the link graph
+# cause ODR violations and false/missed reports.
 function(apply_sanitizers)
   if(${PROJECT_NAME}_ENABLE_ASAN AND ${PROJECT_NAME}_ENABLE_TSAN)
     message(FATAL_ERROR "ASan and TSan cannot be enabled together")

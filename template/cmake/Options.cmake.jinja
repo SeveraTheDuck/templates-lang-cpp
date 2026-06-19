@@ -5,8 +5,8 @@ set(${PROJECT_NAME}_CXX_STANDARD
     CACHE STRING "C++ standard"
 )
 
-# Compiler version floors -- a guard for builds outside the Nix dev shell.
-# Default to the pinned toolchain; lower here to support older compilers.
+# Compiler version floors -- a guard for builds outside the Nix dev shell. Default to the pinned
+# toolchain; lower here to support older compilers.
 set(${PROJECT_NAME}_MIN_GCC
     "{{ gcc_version }}"
     CACHE STRING "Minimum supported GCC version"
