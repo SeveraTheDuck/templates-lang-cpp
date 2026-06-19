@@ -15,12 +15,12 @@ function(setup_gtest)
   endif()
 
   message(STATUS "[${PROJECT_NAME}] Fetching GTest via FetchContent")
-  FetchContent_Declare(
+  fetchcontent_declare(
           googletest
           GIT_REPOSITORY https://github.com/google/googletest.git
           GIT_TAG        v1.17.0
           EXCLUDE_FROM_ALL
           SYSTEM
   )
-  FetchContent_MakeAvailable(googletest)
+  fetchcontent_makeavailable(googletest)
 endfunction()
