@@ -1,15 +1,15 @@
 {%- set project_name = _external_data.base.project_name -%}
 cmake_minimum_required(VERSION 3.28...3.31)
 
-# Version comes from version.txt (managed by release-please in the base layer).
-# Read it before project() so it feeds project(VERSION ...).
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION_RAW
-     LIMIT_COUNT 1)
+# Version comes from version.txt (managed by release-please in the base layer). Read it before
+# project() so it feeds project(VERSION ...).
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION_RAW LIMIT_COUNT 1)
 
 project(
   {{ _external_data.base.project_name }}
   VERSION ${PROJECT_VERSION_RAW}
-  LANGUAGES CXX)
+  LANGUAGES CXX
+)
 
 set(PROJECT_NAMESPACE "{{ cmake_namespace }}")
 
