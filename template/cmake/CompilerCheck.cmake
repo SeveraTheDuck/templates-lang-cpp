@@ -17,8 +17,7 @@ function(check_compiler_versions)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "${${PROJECT_NAME}_MIN_GCC}")
       message(
-        FATAL_ERROR
-          "GCC ${${PROJECT_NAME}_MIN_GCC}+ required, got ${CMAKE_CXX_COMPILER_VERSION}"
+        FATAL_ERROR "GCC ${${PROJECT_NAME}_MIN_GCC}+ required, got ${CMAKE_CXX_COMPILER_VERSION}"
       )
     endif()
   else()
