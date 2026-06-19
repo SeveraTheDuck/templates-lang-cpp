@@ -23,6 +23,10 @@ build preset=preset:
 test preset=preset: (build preset)
     ctest --preset {{ preset }}
 
+# run a subset of tests by name regex (default: all)
+test-filter regex=".*" preset=preset: (build preset)
+    ctest --preset {{ preset }} -R {{ regex }}
+
 # build dev + run the executable
 run *args: (build "dev")
     ./build/dev/source/{{ project }}/{{ project }} {{ args }}
