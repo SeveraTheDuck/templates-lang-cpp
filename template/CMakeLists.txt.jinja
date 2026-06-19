@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.28...3.31)
 
 # Version comes from version.txt (managed by release-please in the base layer).
 # Read it before project() so it feeds project(VERSION ...).
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION_RAW LIMIT_COUNT 1)
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION_RAW
+     LIMIT_COUNT 1)
 
 project(
-  {{ project_name }}
+  {{ _external_data.base.project_name }}
   VERSION ${PROJECT_VERSION_RAW}
-  LANGUAGES CXX
-)
+  LANGUAGES CXX)
 
 set(PROJECT_NAMESPACE "{{ cmake_namespace }}")
 
@@ -38,8 +38,7 @@ apply_sanitizers()
 # Generate <{{ project_name }}/version.hpp> into the build tree from version.txt.
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.hpp.in"
-  "${PROJECT_BINARY_DIR}/generated/{{ project_name }}/version.hpp"
-  @ONLY
+  "${PROJECT_BINARY_DIR}/generated/{{ project_name }}/version.hpp" @ONLY
 )
 
 include(CTest)
