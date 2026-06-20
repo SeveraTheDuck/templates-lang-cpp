@@ -24,6 +24,7 @@ function(setup_project_options)
 
   target_compile_definitions(
     project_options
-    INTERFACE $<$<AND:$<CXX_COMPILER_ID:Clang,AppleClang,GNU>,$<CONFIG:Release>,$<NOT:$<BOOL:${${PROJECT_NAME}_ENABLE_ASAN}>>>:_FORTIFY_SOURCE=2>
+    INTERFACE
+      $<$<AND:$<CXX_COMPILER_ID:Clang,AppleClang,GNU>,$<CONFIG:Release>,$<NOT:$<BOOL:${${PROJECT_NAME}_ENABLE_ASAN}>>>:_FORTIFY_SOURCE=2>
   )
 endfunction()
