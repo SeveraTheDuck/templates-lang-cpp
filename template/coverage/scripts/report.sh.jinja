@@ -28,7 +28,7 @@ case "$mode" in
     ;;
   lcov)
     llvm-cov export "${args[@]}" -instr-profile="$PROFDATA" "$ignore" \
-      -format=lcov > "$BUILD/coverage.lcov"
+      -format=lcov >"$BUILD/coverage.lcov"
     echo "$BUILD/coverage.lcov"
     ;;
   *)

@@ -16,11 +16,11 @@ include=$(
   find tests/pipelines -type f -name '*.json' -print0 \
     | xargs -0 cat \
     | jq -s --argjson compilers "$compilers" \
-        '[ .[].suites[]
+      '[ .[].suites[]
            | . as $s
            | $s.presets[] as $preset
            | $compilers[] as $compiler
            | { compiler: $compiler, preset: $preset, label: $s.label } ]'
 )
 
-echo "matrix=$(jq -cn --argjson include "$include" '{include: $include}')" >> "$GITHUB_OUTPUT"
+echo "matrix=$(jq -cn --argjson include "$include" '{include: $include}')" >>"$GITHUB_OUTPUT"
