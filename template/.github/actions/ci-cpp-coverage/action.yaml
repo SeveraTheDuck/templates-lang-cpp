@@ -11,18 +11,16 @@ runs:
   using: composite
   steps:
     - uses: ./.github/actions/setup-nix
-    - id: report
-      shell: bash
+    - shell: bash
       env:
         COMPILER: ${{ inputs.compiler }}
       run: |
-        file=$(nix develop ".#${COMPILER}" -c bash -c '
+        nix develop ".#${COMPILER}" -c bash -c '
           cmake --preset coverage &&
           cmake --build --preset coverage &&
-          coverage/scripts/report.sh lcov')
-        echo "file=$file" >> "$GITHUB_OUTPUT"
+          coverage/scripts/report.sh lcov'
     - uses: codecov/codecov-action@v5
       with:
         token: ${{ inputs.token }}
-        files: ${{ steps.report.outputs.file }}
+        files: ./build/coverage/coverage.lcov,./build/coverage/coverage.xml
         fail_ci_if_error: false
