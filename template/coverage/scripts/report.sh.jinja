@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Coverage summary. Run via `just coverage`, which configures + builds the
-# coverage preset inside the correct compiler shell first; this script only
-# runs the instrumented tests and prints a source-level summary.
+# Coverage report. Run via `just coverage` (summary) or CI (lcov/cobertura).
+#   usage: report.sh [summary|lcov]
+# Configure+build of the coverage preset happens before this script; here we run
+# the instrumented tests and emit a report in the requested format.
 set -euo pipefail
 
+mode="${1:-summary}"
 BUILD=build/coverage
 {% if compiler_matrix in ['clang', 'both'] -%}
 # --- Clang: source-based (llvm-cov) -----------------------------------------
@@ -11,27 +13,45 @@ PROFRAW="$BUILD/profraw"
 PROFDATA="$BUILD/coverage.profdata"
 
 rm -rf "$PROFRAW" && mkdir -p "$PROFRAW"
-
-# %p-%m -> one raw profile per test process. Absolute path: ctest runs each test
-# from its own working dir, so a relative LLVM_PROFILE_FILE would misplace files.
 LLVM_PROFILE_FILE="$PWD/$PROFRAW/%p-%m.profraw" ctest --preset coverage
-
 llvm-profdata merge -sparse "$PROFRAW"/*.profraw -o "$PROFDATA"
 
-# -object per binary: llvm-cov treats only the first positional arg as an object
-# and the rest as source files, so every test binary needs an explicit -object.
 mapfile -t bins < <(find "$BUILD/tests" "$BUILD/source" -type f -executable)
 args=()
 for b in "${bins[@]}"; do args+=(-object "$b"); done
 
-llvm-cov report "${args[@]}" \
-  -instr-profile="$PROFDATA" \
-  -ignore-filename-regex="(tests/|workloads/|_deps/|external/)"
+ignore='-ignore-filename-regex=(tests/|workloads/|_deps/|external/)'
+
+case "$mode" in
+  summary)
+    llvm-cov report "${args[@]}" -instr-profile="$PROFDATA" "$ignore"
+    ;;
+  lcov)
+    llvm-cov export "${args[@]}" -instr-profile="$PROFDATA" "$ignore" \
+      -format=lcov > "$BUILD/coverage.lcov"
+    echo "$BUILD/coverage.lcov"
+    ;;
+  *)
+    echo "report.sh: unknown mode '$mode' (use summary|lcov)" >&2
+    exit 2
+    ;;
+esac
 {%- else -%}
 # --- GCC: arc-based (gcovr) -------------------------------------------------
 ctest --preset coverage
 
-gcovr --root . --filter "source/" \
-  --gcov-executable gcov \
-  --print-summary "$BUILD"
+case "$mode" in
+  summary)
+    gcovr --root . --filter "source/" --gcov-executable gcov --print-summary "$BUILD"
+    ;;
+  lcov)
+    gcovr --root . --filter "source/" --gcov-executable gcov \
+      --cobertura "$BUILD/coverage.xml" "$BUILD"
+    echo "$BUILD/coverage.xml"
+    ;;
+  *)
+    echo "report.sh: unknown mode '$mode' (use summary|lcov)" >&2
+    exit 2
+    ;;
+esac
 {%- endif %}

@@ -1,0 +1,29 @@
+name: CodeQL C++
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  schedule:
+    - cron: "0 9 * * 1" # every Monday at 9:00 UTC
+permissions:
+  contents: read
+  security-events: write
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-nix
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: c-cpp
+          build-mode: manual
+      - shell: bash
+        run: |
+          nix develop ".#{% if compiler_matrix in ['clang', 'both'] %}clang{% else %}gcc{% endif %}" -c bash -c '
+            cmake --preset dev &&
+            cmake --build --preset dev'
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:c-cpp"

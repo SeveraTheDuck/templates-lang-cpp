@@ -1,0 +1,12 @@
+name: CI C++ matrix
+description: Expand tests/pipelines/**/*.json into a build matrix (suite x preset x compiler).
+outputs:
+  matrix:
+    description: JSON matrix include for the build job.
+    value: ${{ steps.gen.outputs.matrix }}
+runs:
+  using: composite
+  steps:
+    - id: gen
+      shell: bash
+      run: bash ${{ github.action_path }}/matrix.sh

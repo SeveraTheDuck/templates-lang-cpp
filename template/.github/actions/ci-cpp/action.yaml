@@ -1,0 +1,22 @@
+name: CI C++ build
+description: Configure, build and test one (compiler, preset, label) matrix cell.
+inputs:
+  compiler:
+    description: Compiler dev shell to use (gcc or clang).
+    required: true
+  preset:
+    description: CMake preset to configure and build.
+    required: true
+  label:
+    description: Test target / CTest label to build and run.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup-nix
+    - shell: bash
+      env:
+        COMPILER: ${{ inputs.compiler }}
+        PRESET: ${{ inputs.preset }}
+        LABEL: ${{ inputs.label }}
+      run: bash ${{ github.action_path }}/build.sh

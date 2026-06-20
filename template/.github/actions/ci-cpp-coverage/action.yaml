@@ -1,0 +1,28 @@
+name: CI C++ coverage
+description: Build the coverage preset, export a report, upload to Codecov.
+inputs:
+  compiler:
+    description: Compiler dev shell for the coverage build.
+    required: true
+  token:
+    description: Codecov upload token.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup-nix
+    - id: report
+      shell: bash
+      env:
+        COMPILER: ${{ inputs.compiler }}
+      run: |
+        file=$(nix develop ".#${COMPILER}" -c bash -c '
+          cmake --preset coverage &&
+          cmake --build --preset coverage &&
+          coverage/scripts/report.sh lcov')
+        echo "file=$file" >> "$GITHUB_OUTPUT"
+    - uses: codecov/codecov-action@v5
+      with:
+        token: ${{ inputs.token }}
+        files: ${{ steps.report.outputs.file }}
+        fail_ci_if_error: false
