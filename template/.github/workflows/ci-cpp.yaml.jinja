@@ -1,3 +1,4 @@
+{% raw -%}
 name: CI C++
 on:
   push:
@@ -31,6 +32,7 @@ jobs:
           compiler: ${{ matrix.compiler }}
           preset: ${{ matrix.preset }}
           label: ${{ matrix.label }}
+{%- endraw %}
 {%- if enable_coverage %}
   coverage:
     runs-on: ubuntu-latest
@@ -43,5 +45,5 @@ jobs:
 {%- else %}
           compiler: gcc
 {%- endif %}
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}
 {%- endif %}
