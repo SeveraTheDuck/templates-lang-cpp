@@ -9,34 +9,27 @@
 
 { pkgs, lib, ... }:
 let
+  compilers = import ./compilers.nix { inherit pkgs; };
 {%- if compiler_matrix == 'both' %}
-  compiler = "{{ primary_compiler }}";
+  toolchain = compilers.{{ primary_compiler }};
 {%- else %}
-  compiler = "{{ compiler_matrix }}";
+  toolchain = compilers.{{ compiler_matrix }};
 {%- endif %}
-  stdenv =
-    if compiler == "gcc"
-    then pkgs.gcc{{ gcc_version }}Stdenv
-    else pkgs.llvmPackages_{{ clang_version }}.stdenv;
 in
 {
-  packages.default = stdenv.mkDerivation {
+  packages.default = toolchain.stdenv.mkDerivation {
     pname = "{{ _external_data.base.project_name }}";
     version = lib.strings.trim (builtins.readFile ./../../version.txt);
-
     src = ./../..;
-
     nativeBuildInputs = with pkgs; [ cmake ninja ];
-
     hardeningDisable = [ "fortify" ];
-
     cmakeBuildType = "Release";
     cmakeFlags = [
       (lib.cmakeBool "{{ _external_data.base.project_name }}_ENABLE_INSTALL" true)
       (lib.cmakeBool "{{ _external_data.base.project_name }}_ENABLE_CCACHE" false)
       (lib.cmakeBool "BUILD_TESTING" false)
+      (lib.cmakeBool "CMAKE_CXX_SCAN_FOR_MODULES" false)
     ];
-
     doCheck = false;
   };
 }
