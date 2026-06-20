@@ -6,7 +6,7 @@
 
 namespace {{ ns }} {
 
-constexpr std::string Greeting(std::string_view name) {
+std::string Greeting(std::string_view name) {
   return "Hello, " + std::string{name} + "!";
 }
 
