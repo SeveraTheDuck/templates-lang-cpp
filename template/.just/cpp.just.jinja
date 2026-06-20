@@ -41,3 +41,15 @@ clean:
 profile workload: (build "profile")
     profiling/scripts/run.sh build/profile/workloads/{{ project }}_{{ workload }}_workload
 {%- endraw %}{% endif %}
+{% if enable_coverage %}
+# build the coverage preset (compiler-pinned) + print a source-level summary
+# coverage is the only recipe that pins the compiler: its source of truth is
+# Clang (llvm-cov) for clang/both, gcov/gcovr for gcc -- so it cannot reuse the
+# ambient (build) path and wraps an explicit nix develop shell instead.
+coverage:
+{%- if compiler_matrix in ['clang', 'both'] %}
+    nix develop .#clang -c bash -c 'cmake --preset coverage && cmake --build --preset coverage && coverage/scripts/report.sh'
+{%- else %}
+    nix develop .#gcc -c bash -c 'cmake --preset coverage && cmake --build --preset coverage && coverage/scripts/report.sh'
+{%- endif %}
+{% endif %}

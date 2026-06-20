@@ -16,6 +16,9 @@
       cmake-format
 {%- if enable_coverage %}
       gcovr
+{%- if compiler_matrix in ['both', 'clang'] %}
+      llvmPackages_{{ clang_version }}.llvm
+{%- endif %}
 {%- endif %}
     ]
     ++ lib.optionals stdenv.hostPlatform.isLinux (
