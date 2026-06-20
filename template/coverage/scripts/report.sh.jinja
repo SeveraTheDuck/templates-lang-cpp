@@ -20,7 +20,7 @@ llvm-profdata merge -sparse "$PROFRAW"/*.profraw -o "$PROFDATA"
 
 # -object per binary: llvm-cov treats only the first positional arg as an object
 # and the rest as source files, so every test binary needs an explicit -object.
-mapfile -t bins < <(find "$BUILD/tests" -type f -executable)
+mapfile -t bins < <(find "$BUILD/tests" "$BUILD/source" -type f -executable)
 args=()
 for b in "${bins[@]}"; do args+=(-object "$b"); done
 
