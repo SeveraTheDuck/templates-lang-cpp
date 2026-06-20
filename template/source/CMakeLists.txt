@@ -4,6 +4,7 @@
 add_library(${PROJECT_NAME} STATIC)
 add_library(${PROJECT_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE project_options)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_${${PROJECT_NAME}_CXX_STANDARD})
 
 set(${PROJECT_NAME}_INCLUDE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 

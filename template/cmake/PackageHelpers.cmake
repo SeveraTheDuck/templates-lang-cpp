@@ -16,7 +16,7 @@ function(setup_install)
   # Install the library + its FILE_SET headers. EXPORT records the target into a
   # named export set; FILE_SET HEADERS installs public headers and rewrites the
   # target's include dir to the INSTALL_INTERFACE location automatically.
-  install(TARGETS ${PROJECT_NAME}
+  install(TARGETS ${PROJECT_NAME} project_options
           EXPORT ${PROJECT_NAME}Targets
           ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
           LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
