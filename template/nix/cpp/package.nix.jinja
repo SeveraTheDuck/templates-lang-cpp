@@ -21,7 +21,12 @@ in
     pname = "{{ _external_data.base.project_name }}";
     version = lib.strings.trim (builtins.readFile ./../../version.txt);
     src = ./../..;
-    nativeBuildInputs = with pkgs; [ cmake ninja ];
+
+    nativeBuildInputs = with pkgs; [
+      cmake
+      ninja
+    ];
+
     hardeningDisable = [ "fortify" ];
     cmakeBuildType = "Release";
     cmakeFlags = [

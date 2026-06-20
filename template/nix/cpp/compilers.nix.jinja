@@ -6,14 +6,14 @@
 {%- if compiler_matrix in ['both', 'gcc'] %}
   gcc = {
     stdenv = pkgs.gcc{{ gcc_version }}Stdenv;
-    cc  = "${pkgs.gcc{{ gcc_version }}}/bin/gcc";
+    cc = "${pkgs.gcc{{ gcc_version }}}/bin/gcc";
     cxx = "${pkgs.gcc{{ gcc_version }}}/bin/g++";
   };
 {%- endif %}
 {%- if compiler_matrix in ['both', 'clang'] %}
   clang = {
     stdenv = pkgs.llvmPackages_{{ clang_version }}.stdenv;
-    cc  = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang";
+    cc = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang";
     cxx = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang++";
   };
 {%- endif %}
