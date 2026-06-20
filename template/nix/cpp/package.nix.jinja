@@ -1,0 +1,42 @@
+# -- C++ package output --------------------------------------------------------
+# Builds the library as an installable Nix package, reusing the project's own
+# install(EXPORT) rules: mkDerivation's install phase runs `cmake --install`, so
+# the package carries the same Config/Targets/headers/.a a consumer gets from a
+# manual install. Tests are off (BUILD_TESTING=OFF) so the sandboxed build needs
+# no network for FetchContent GTest. Fortify hardening is dropped because
+# ProjectOptions.cmake defines _FORTIFY_SOURCE itself in Release.
+# perSystem module.
+
+{ pkgs, lib, ... }:
+let
+{%- if compiler_matrix == 'both' %}
+  compiler = "{{ primary_compiler }}";
+{%- else %}
+  compiler = "{{ compiler_matrix }}";
+{%- endif %}
+  stdenv =
+    if compiler == "gcc"
+    then pkgs.gcc{{ gcc_version }}Stdenv
+    else pkgs.llvmPackages_{{ clang_version }}.stdenv;
+in
+{
+  packages.default = stdenv.mkDerivation {
+    pname = "{{ _external_data.base.project_name }}";
+    version = lib.strings.trim (builtins.readFile ./../../version.txt);
+
+    src = ./../..;
+
+    nativeBuildInputs = with pkgs; [ cmake ninja ];
+
+    hardeningDisable = [ "fortify" ];
+
+    cmakeBuildType = "Release";
+    cmakeFlags = [
+      (lib.cmakeBool "{{ _external_data.base.project_name }}_ENABLE_INSTALL" true)
+      (lib.cmakeBool "{{ _external_data.base.project_name }}_ENABLE_CCACHE" false)
+      (lib.cmakeBool "BUILD_TESTING" false)
+    ];
+
+    doCheck = false;
+  };
+}

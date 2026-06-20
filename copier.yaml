@@ -59,3 +59,5 @@ _exclude:
   - "{% if not enable_profiling %}profiling{% endif %}"
   - "{% if not enable_profiling %}workloads{% endif %}"
   - "{% if not enable_coverage %}coverage{% endif %}"
+_skip_if_exists:
+  - "cmake/UserOptions.cmake"
