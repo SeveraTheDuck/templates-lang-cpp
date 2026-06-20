@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Coverage summary. Run via `just coverage`, which configures + builds the
+# coverage preset inside the correct compiler shell first; this script only
+# runs the instrumented tests and prints a source-level summary.
+set -euo pipefail
+
+BUILD=build/coverage
+{% if compiler_matrix in ['clang', 'both'] -%}
+# --- Clang: source-based (llvm-cov) -----------------------------------------
+PROFRAW="$BUILD/profraw"
+PROFDATA="$BUILD/coverage.profdata"
+
+rm -rf "$PROFRAW" && mkdir -p "$PROFRAW"
+
+# %p-%m -> one raw profile per test process. Absolute path: ctest runs each test
+# from its own working dir, so a relative LLVM_PROFILE_FILE would misplace files.
+LLVM_PROFILE_FILE="$PWD/$PROFRAW/%p-%m.profraw" ctest --preset coverage
+
+llvm-profdata merge -sparse "$PROFRAW"/*.profraw -o "$PROFDATA"
+
+# -object per binary: llvm-cov treats only the first positional arg as an object
+# and the rest as source files, so every test binary needs an explicit -object.
+mapfile -t bins < <(find "$BUILD/tests" -type f -executable)
+args=()
+for b in "${bins[@]}"; do args+=(-object "$b"); done
+
+llvm-cov report "${args[@]}" \
+  -instr-profile="$PROFDATA" \
+  -ignore-filename-regex="(tests/|workloads/|_deps/|external/)"
+{%- else -%}
+# --- GCC: arc-based (gcovr) -------------------------------------------------
+ctest --preset coverage
+
+# gcov must match the compiler. The gcc shell sets CXX=.../bin/g++, so gcov is
+# its sibling -- derive it from $CXX rather than guessing PATH.
+gcovr --root . --filter "source/" \
+  --gcov-executable "$(dirname "$CXX")/gcov" \
+  --print-summary "$BUILD"
+{%- endif %}

@@ -58,3 +58,4 @@ _migrations:
 _exclude:
   - "{% if not enable_profiling %}profiling{% endif %}"
   - "{% if not enable_profiling %}workloads{% endif %}"
+  - "{% if not enable_coverage %}coverage{% endif %}"

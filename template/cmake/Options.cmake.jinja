@@ -25,3 +25,6 @@ option(${PROJECT_NAME}_ENABLE_INSTALL "Generate install / export rules" OFF)
 {%- if enable_profiling %}
 option(${PROJECT_NAME}_ENABLE_WORKLOADS "Build profiling workloads" OFF)
 {%- endif %}
+{%- if enable_coverage %}
+option(${PROJECT_NAME}_ENABLE_COVERAGE "Enable coverage instrumentation" OFF)
+{%- endif %}

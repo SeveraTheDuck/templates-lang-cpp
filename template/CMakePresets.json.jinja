@@ -51,18 +51,26 @@
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "{{ project }}_ENABLE_WORKLOADS": "ON"
       }
-    }{% endif %}
+    }{% endif %}{% if enable_coverage %},
+     {
+       "name": "coverage",
+       "displayName": "Coverage (Debug + instrumentation)",
+       "inherits": "dev",
+       "cacheVariables": { "{{ project }}_ENABLE_COVERAGE": "ON" }
+     }{% endif %}
   ],
   "buildPresets": [
     { "name": "dev", "configurePreset": "dev" },
     { "name": "release", "configurePreset": "release" }{% if enable_sanitizers %},
     { "name": "dev-asan", "configurePreset": "dev-asan" },
     { "name": "dev-tsan", "configurePreset": "dev-tsan" }{% endif %}{% if enable_profiling %},
-    { "name": "profile", "configurePreset": "profile" }{% endif %}
+    { "name": "profile", "configurePreset": "profile" }{% endif %}{% if enable_coverage %},
+    { "name": "coverage", "configurePreset": "coverage" }{% endif %}
   ],
   "testPresets": [
     { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true } }{% if enable_sanitizers %},
     { "name": "dev-asan", "configurePreset": "dev-asan", "output": { "outputOnFailure": true } },
-    { "name": "dev-tsan", "configurePreset": "dev-tsan", "output": { "outputOnFailure": true } }{% endif %}
+    { "name": "dev-tsan", "configurePreset": "dev-tsan", "output": { "outputOnFailure": true } }{% endif %}{% if enable_coverage %},
+    { "name": "coverage", "configurePreset": "coverage", "output": { "outputOnFailure": true } }{% endif %}
   ]
 }
