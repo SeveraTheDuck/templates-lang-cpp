@@ -6,23 +6,16 @@
 
 { config, pkgs, ... }:
 let
+  compilers = import ./compilers.nix { inherit pkgs; };
   mkCppShell = import ./mkCppShell.nix { inherit pkgs config; };
 in
 {
   devShells = {
 {%- if compiler_matrix in ['both', 'gcc'] %}
-    gcc = mkCppShell {
-      stdenv = pkgs.gcc{{ gcc_version }}Stdenv;
-      cc = "${pkgs.gcc{{ gcc_version }}}/bin/gcc";
-      cxx = "${pkgs.gcc{{ gcc_version }}}/bin/g++";
-    };
+    gcc = mkCppShell compilers.gcc;
 {%- endif %}
 {%- if compiler_matrix in ['both', 'clang'] %}
-    clang = mkCppShell {
-      stdenv = pkgs.llvmPackages_{{ clang_version }}.stdenv;
-      cc = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang";
-      cxx = "${pkgs.llvmPackages_{{ clang_version }}.clang}/bin/clang++";
-    };
+    clang = mkCppShell compilers.clang;
 {%- endif %}
   };
 }
