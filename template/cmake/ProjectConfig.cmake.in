@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+# This project's library has no public package dependencies. If public deps are added later,
+# include(CMakeFindDependencyMacro) and find_dependency(...) them here BEFORE including the targets
+# file, so consumers resolve them transitively.
+
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+check_required_components(@PROJECT_NAME@)
