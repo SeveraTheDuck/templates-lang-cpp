@@ -1,0 +1,47 @@
+name: CI C++
+on:
+  push:
+    branches-ignore: [main, dev]
+  pull_request:
+    branches: [dev]
+concurrency:
+  group: ci-cpp-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: gen
+        uses: ./.github/actions/ci-cpp-matrix
+  build:
+    needs: matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/ci-cpp
+        with:
+          compiler: ${{ matrix.compiler }}
+          preset: ${{ matrix.preset }}
+          label: ${{ matrix.label }}
+{%- if enable_coverage %}
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/ci-cpp-coverage
+        with:
+{%- if compiler_matrix in ['clang', 'both'] %}
+          compiler: clang
+{%- else %}
+          compiler: gcc
+{%- endif %}
+          token: ${{ secrets.CODECOV_TOKEN }}
+{%- endif %}
