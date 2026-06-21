@@ -1,0 +1,24 @@
+# Doxyfile -- Doxygen configuration. PROJECT_NUMBER and HTML_EXTRA_STYLESHEET are
+# appended at generation time by the docs CI action (version comes from
+# version.txt; the theme path is a Nix store path resolved at run time).
+
+PROJECT_NAME           = "{{ _external_data.base.project_name }}"
+PROJECT_BRIEF          = "{{ _external_data.base.project_description }}"
+OUTPUT_DIRECTORY       = build/docs
+INPUT                  = source
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */tests/* */workloads/* */_deps/* */build/*
+EXTRACT_ALL            = YES
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+HAVE_DOT               = YES
+
+# doxygen-awesome-css: sidebar-only layout, automatic dark mode via the
+# prefers-color-scheme media query (no toggle, no custom header.html).
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE_HUE    = 209
+HTML_COLORSTYLE_SAT    = 255
+HTML_COLORSTYLE_GAMMA  = 113
