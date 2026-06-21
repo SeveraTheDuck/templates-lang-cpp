@@ -1,0 +1,14 @@
+name: CI C++ build
+description: Build and test every pipeline suite x preset for one compiler.
+inputs:
+  compiler:
+    description: Compiler dev shell (gcc or clang).
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup-nix
+    - shell: bash
+      env:
+        COMPILER: ${{ inputs.compiler }}
+      run: bash ${{ github.action_path }}/build.sh

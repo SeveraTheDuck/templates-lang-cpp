@@ -1,0 +1,33 @@
+{% raw -%}
+name: CI C++
+on:
+  push:
+    branches-ignore: [main, dev]
+  pull_request:
+    branches: [dev]
+concurrency:
+  group: ci-cpp-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+{% endraw %}
+{%- if compiler_matrix in ['both', 'gcc'] %}
+          - gcc
+{%- endif %}
+{%- if compiler_matrix in ['both', 'clang'] %}
+          - clang
+{%- endif %}
+{% raw %}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/ci-cpp
+        with:
+          compiler: ${{ matrix.compiler }}
+{%- endraw %}

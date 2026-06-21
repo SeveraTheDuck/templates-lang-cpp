@@ -1,0 +1,76 @@
+{%- set project = _external_data.base.project_name -%}
+{
+  "version": 8,
+  "cmakeMinimumRequired": { "major": 3, "minor": 28, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_CXX_SCAN_FOR_MODULES": "OFF"
+      }
+    },
+    {
+      "name": "dev",
+      "displayName": "Dev (Debug)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "displayName": "Release (LTO)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "{{ project }}_ENABLE_LTO": "ON"
+      }
+    }{% if enable_sanitizers %},
+    {
+      "name": "dev-asan",
+      "displayName": "Dev + ASan/UBSan",
+      "inherits": "dev",
+      "cacheVariables": {
+        "{{ project }}_ENABLE_ASAN": "ON",
+        "{{ project }}_ENABLE_UBSAN": "ON"
+      }
+    },
+    {
+      "name": "dev-tsan",
+      "displayName": "Dev + TSan",
+      "inherits": "dev",
+      "cacheVariables": { "{{ project }}_ENABLE_TSAN": "ON" }
+    }{% endif %}{% if enable_profiling %},
+    {
+      "name": "profile",
+      "displayName": "Profile (RelWithDebInfo + frame pointers + workloads)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "{{ project }}_ENABLE_WORKLOADS": "ON"
+      }
+    }{% endif %}{% if enable_coverage %},
+     {
+       "name": "coverage",
+       "displayName": "Coverage (Debug + instrumentation)",
+       "inherits": "dev",
+       "cacheVariables": { "{{ project }}_ENABLE_COVERAGE": "ON" }
+     }{% endif %}
+  ],
+  "buildPresets": [
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "release", "configurePreset": "release" }{% if enable_sanitizers %},
+    { "name": "dev-asan", "configurePreset": "dev-asan" },
+    { "name": "dev-tsan", "configurePreset": "dev-tsan" }{% endif %}{% if enable_profiling %},
+    { "name": "profile", "configurePreset": "profile" }{% endif %}{% if enable_coverage %},
+    { "name": "coverage", "configurePreset": "coverage" }{% endif %}
+  ],
+  "testPresets": [
+    { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true } }{% if enable_sanitizers %},
+    { "name": "dev-asan", "configurePreset": "dev-asan", "output": { "outputOnFailure": true } },
+    { "name": "dev-tsan", "configurePreset": "dev-tsan", "output": { "outputOnFailure": true } }{% endif %}{% if enable_coverage %},
+    { "name": "coverage", "configurePreset": "coverage", "output": { "outputOnFailure": true } }{% endif %}
+  ]
+}

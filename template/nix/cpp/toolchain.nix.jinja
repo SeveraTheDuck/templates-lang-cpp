@@ -1,0 +1,33 @@
+# -- C++ toolchain -------------------------------------------------------------
+# Appends C++ tooling to base's append-only `devShellPackages` accumulator. It
+# is a list option, so definitions across layers concatenate -- the base default
+# shell becomes C++-capable without being redefined.
+# perSystem module.
+
+{ pkgs, lib, ... }:
+{
+  devShellPackages =
+    with pkgs;
+    [
+      cmake
+      ninja
+      ccache
+      clang-tools
+      cmake-format
+{%- if enable_coverage %}
+      gcovr
+{%- if compiler_matrix in ['both', 'clang'] %}
+      llvmPackages_{{ clang_version }}.llvm
+{%- endif %}
+{%- endif %}
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux (
+      [ valgrind ]
+{%- if enable_profiling %}
+      ++ [
+        perf
+        flamegraph
+      ]
+{%- endif %}
+    );
+}
