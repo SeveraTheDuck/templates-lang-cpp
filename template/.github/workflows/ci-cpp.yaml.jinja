@@ -17,20 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         compiler:
-{%- endraw %}
+{% endraw %}
 {%- if compiler_matrix in ['both', 'gcc'] %}
           - gcc
 {%- endif %}
 {%- if compiler_matrix in ['both', 'clang'] %}
           - clang
 {%- endif %}
-{% raw -%}
+{% raw %}
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/ci-cpp
         with:
           compiler: ${{ matrix.compiler }}
-{%- endraw %}
+{% endraw -%}
 {%- if enable_coverage %}
   coverage:
     runs-on: ubuntu-latest
