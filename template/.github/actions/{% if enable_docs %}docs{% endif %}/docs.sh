@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+# Generate Doxygen HTML into build/docs/html with the doxygen-awesome theme.
 set -euo pipefail
 
 THEME=$(nix eval --raw nixpkgs#doxygen-awesome-css)
 VERSION=$(cat version.txt)
+
+mkdir -p build/docs
 
 {
   cat docs/Doxyfile
