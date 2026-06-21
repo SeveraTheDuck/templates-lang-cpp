@@ -1,4 +1,9 @@
 {%- set ns = _external_data.base.project_name | replace('-', '_') -%}
+/**
+ * @file greeting.hpp
+ * @brief Greeting utilities for {{ ... }}.
+ */
+
 #pragma once
 
 #include <string>
@@ -6,7 +11,12 @@
 
 namespace {{ ns }} {
 
-// Returns a greeting for the given name. Replace with your own API.
+/**
+ * @brief Builds a greeting message for the given name.
+ *
+ * @param name Name to greet.
+ * @return A greeting of the form "Hello, <name>!".
+ */
 [[nodiscard]] std::string Greeting(std::string_view name);
 
 }  // namespace {{ ns }}
