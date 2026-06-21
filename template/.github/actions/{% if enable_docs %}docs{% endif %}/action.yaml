@@ -1,0 +1,7 @@
+name: Docs
+description: Generate Doxygen API documentation with the doxygen-awesome theme.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: bash ${{ github.action_path }}/docs.sh

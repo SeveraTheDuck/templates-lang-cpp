@@ -47,6 +47,10 @@ enable_profiling:
   type: bool
   help: "Provide perf-based profiling workloads and flamegraph scripts (Linux only)"
   default: false
+enable_docs:
+  type: bool
+  help: "Generate Doxygen API documentation and deploy it to GitHub Pages"
+  default: false
 # --- Copier settings ----------------------------------------------------------
 _min_copier_version: "9.5.0"
 _subdirectory: template
