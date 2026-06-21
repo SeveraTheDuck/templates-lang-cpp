@@ -30,18 +30,4 @@ jobs:
       - uses: ./.github/actions/ci-cpp
         with:
           compiler: ${{ matrix.compiler }}
-{% endraw -%}
-{%- if enable_coverage %}
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: ./.github/actions/ci-cpp-coverage
-        with:
-{%- if compiler_matrix in ['clang', 'both'] %}
-          compiler: clang
-{%- else %}
-          compiler: gcc
-{%- endif %}
-          token: {% raw %}${{ secrets.CODECOV_TOKEN }}{% endraw %}
-{%- endif %}
+{%- endraw %}

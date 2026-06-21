@@ -55,10 +55,5 @@ _external_data:
   base: .copier/answers.base.yaml
 _migrations:
   - command: bash .copier/post-migration.cpp.sh
-_exclude:
-  - "{% if not enable_profiling %}profiling{% endif %}"
-  - "{% if not enable_profiling %}workloads{% endif %}"
-  - "{% if not enable_coverage %}coverage{% endif %}"
-  - "{% if not enable_coverage %}codecov.yaml{% endif %}"
 _skip_if_exists:
   - "cmake/UserOptions.cmake"
