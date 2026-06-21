@@ -11,27 +11,25 @@ concurrency:
 permissions:
   contents: read
 jobs:
-  matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.gen.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v5
-      - id: gen
-        uses: ./.github/actions/ci-cpp-matrix
   build:
-    needs: matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+      matrix:
+        compiler:
+{%- endraw %}
+{%- if compiler_matrix in ['both', 'gcc'] %}
+          - gcc
+{%- endif %}
+{%- if compiler_matrix in ['both', 'clang'] %}
+          - clang
+{%- endif %}
+{% raw -%}
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/ci-cpp
         with:
           compiler: ${{ matrix.compiler }}
-          preset: ${{ matrix.preset }}
-          label: ${{ matrix.label }}
 {%- endraw %}
 {%- if enable_coverage %}
   coverage:

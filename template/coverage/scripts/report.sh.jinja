@@ -29,7 +29,6 @@ case "$mode" in
   lcov)
     llvm-cov export "${args[@]}" -instr-profile="$PROFDATA" "$ignore" \
       -format=lcov >"$BUILD/coverage.lcov"
-    echo "$BUILD/coverage.lcov"
     ;;
   *)
     echo "report.sh: unknown mode '$mode' (use summary|lcov)" >&2
@@ -47,7 +46,6 @@ case "$mode" in
   lcov)
     gcovr --root . --filter "source/" --gcov-executable gcov \
       --cobertura "$BUILD/coverage.xml" "$BUILD"
-    echo "$BUILD/coverage.xml"
     ;;
   *)
     echo "report.sh: unknown mode '$mode' (use summary|lcov)" >&2
