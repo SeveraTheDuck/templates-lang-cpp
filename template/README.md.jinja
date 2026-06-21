@@ -1,0 +1,162 @@
+# {{ _external_data.base.project_name }}
+
+{% if _external_data.base.project_description -%}
+{{ _external_data.base.project_description }}
+{% endif %}
+
+<!-- === templates-base badges === -->
+[![CI](https://github.com/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/actions/workflows/ci.yaml/badge.svg)](https://github.com/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/actions/workflows/ci.yaml)
+[![Release](https://img.shields.io/github/v/release/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }})](https://github.com/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/releases)
+[![License](https://img.shields.io/badge/license-{{ _external_data.base.license | replace('-', '--') }}-blue.svg)](LICENSES/{{ _external_data.base.license }}.txt)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com)
+<!-- === end templates-base badges === -->
+<!-- === templates-lang-cpp badges === -->
+[![CI C++](https://github.com/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/actions/workflows/ci-cpp.yaml/badge.svg)](https://github.com/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/actions/workflows/ci-cpp.yaml)
+{% if enable_coverage -%}
+[![codecov](https://codecov.io/gh/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}/graph/badge.svg)](https://codecov.io/gh/{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }})
+{% endif -%}
+[![C++{{ cpp_standard }}](https://img.shields.io/badge/C%2B%2B-{{ cpp_standard }}-blue.svg)](https://en.cppreference.com/w/cpp)
+<!-- === end templates-lang-cpp badges === -->
+
+## Development
+
+This project builds with a pinned toolchain provided entirely through Nix — you
+do not install compilers or CMake yourself.
+
+### Prerequisites
+
+- [Nix](https://nixos.org/download) with flakes enabled
+- [direnv](https://direnv.net) (recommended, for automatic shell activation)
+
+### Environment
+
+With direnv, the dev shell loads automatically:
+
+```bash
+direnv allow
+```
+
+This enters the {% if compiler_matrix == 'both' %}`{{ primary_compiler }}`{% else %}`{{ compiler_matrix }}`{% endif %} dev shell. The default shell is a tooling shell; builds use the pinned per-compiler shells.
+
+Without direnv, enter a shell explicitly:
+
+```bash
+{% if compiler_matrix in ['both', 'clang'] %}nix develop .#clang   # Clang {{ clang_version }}
+{% endif %}{%- if compiler_matrix in ['both', 'gcc'] %}
+nix develop .#gcc     # GCC {{ gcc_version }}
+{% endif %}```
+
+### Build & test
+
+```bash
+just warmup        # configure dev, generate compile_commands.json for clangd
+just build         # configure + build (default preset: dev)
+just test          # build + run unit tests
+just run           # build + run the executable
+```
+
+Build or test a specific preset:
+
+```bash
+just build release
+just test {% if enable_sanitizers %}dev-asan{% else %}dev{% endif %}
+```
+
+Run a subset of tests by name:
+
+```bash
+just test-filter <regex>
+```
+
+{% if enable_sanitizers -%}
+Sanitizer presets are available: `dev-asan` (ASan + UBSan) and `dev-tsan` (TSan).
+
+{% endif -%}
+### Static analysis & formatting
+
+```bash
+just tidy          # clang-tidy over the dev compile database
+just fmt           # format all sources (treefmt)
+```
+{% if enable_coverage %}
+### Coverage
+
+```bash
+just coverage      # build instrumented, run tests, print a source-level summary
+```
+
+Coverage is collected with {% if compiler_matrix in ['clang', 'both'] %}llvm-cov (source-based){% else %}gcovr (arc-based){% endif %} and uploaded to Codecov on pull requests.
+{% endif %}{% if enable_profiling %}
+### Profiling
+
+```bash
+just profile <workload>    # build the profile preset, record a flamegraph
+```
+
+Workloads live in `workloads/`; recorded data and flamegraphs are written under
+`profiling/results/`.
+{% endif %}
+### Custom build options
+
+Project-local compile options go in `cmake/UserOptions.cmake`. This file is
+yours — it is created once and never overwritten by template updates. For flags
+that only apply to this project's own code:
+
+```cmake
+target_compile_options(project_options INTERFACE -fyour-flag)
+```
+
+For flags that consumers of the library must also use:
+
+```cmake
+target_compile_options({{ _external_data.base.project_name }} PUBLIC -fyour-flag)
+```
+
+## Using this library
+
+### With Nix
+
+Add this flake as an input and use its package output:
+
+```nix
+inputs.{{ _external_data.base.project_name }}.url = "github:{{ _external_data.base.github_owner }}/{{ _external_data.base.project_name }}";
+# packages.${system}.default carries the installed library + CMake config
+```
+
+### With CMake (any toolchain, no Nix required)
+
+Build and install into a prefix:
+
+```bash
+cmake -B build -D {{ _external_data.base.project_name }}_ENABLE_INSTALL=ON
+cmake --build build
+cmake --install build --prefix <prefix>
+```
+
+Then consume it from another project:
+
+```cmake
+find_package({{ _external_data.base.project_name }} CONFIG REQUIRED)
+target_link_libraries(your_target PRIVATE {{ cmake_namespace }}::{{ _external_data.base.project_name }})
+```
+
+The installed package is toolchain-agnostic, but being a static library it is
+ABI-sensitive: link it with a standard library compatible with the one it was
+built against.
+
+## Updating from template
+
+```bash
+copier update --trust -a .copier/answers.cpp.yaml
+```
+
+<!-- TODO: document centralised template rollout via the dedicated repository -->
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[{{ _external_data.base.license }}](LICENSES/{{ _external_data.base.license }}.txt) © {{ _external_data.base.author }}
