@@ -110,7 +110,7 @@ Generate both layers into a scratch directory and exercise the result:
 SCRATCH=$(mktemp -d); cd "$SCRATCH"
 copier copy --trust gh:SeveraTheDuck/templates-base .
 git init -q && git add -A && git commit -qm base
-copier copy --trust /path/to/templates-lang-cpp .
+copier copy --trust gh:SeveraTheDuck/templates-lang-cpp .
 git add -A
 just build && just test
 ```
