@@ -8,7 +8,6 @@
     ./toolchain.nix
     ./shells.nix
     ./treefmt.nix
-    ./hooks.nix
     ./package.nix
   ];
 }

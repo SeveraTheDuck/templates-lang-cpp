@@ -73,10 +73,9 @@ just test-filter <regex>
 Sanitizer presets are available: `dev-asan` (ASan + UBSan) and `dev-tsan` (TSan).
 
 {% endif -%}
-### Static analysis & formatting
+### Formatting
 
 ```bash
-just tidy          # clang-tidy over the dev compile database
 just fmt           # format all sources (treefmt)
 ```
 {% if enable_coverage %}
