@@ -2,10 +2,6 @@
 
 project := "{{ _external_data.base.project_name }}"
 
-# static analysis: clang-tidy over the dev compile database
-tidy: (build "dev")
-    run-clang-tidy -p build/dev{% if compiler_matrix in ['gcc', 'both'] %} -extra-arg=-fgnuc-version={{ gcc_version }}{% endif %} -quiet
-
 {% raw -%}
 # default preset for build / test
 preset := "dev"
