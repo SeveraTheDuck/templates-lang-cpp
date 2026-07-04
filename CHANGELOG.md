@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/SeveraTheDuck/templates-lang-cpp/compare/v1.0.0...v1.0.1) (2026-07-04)
+
+
+### Bug Fixes
+
+* broken link in README ([a1b749d](https://github.com/SeveraTheDuck/templates-lang-cpp/commit/a1b749db038bb401923ade29b04a1adddd5b62d7))
+* broken link in README ([2fb1e5d](https://github.com/SeveraTheDuck/templates-lang-cpp/commit/2fb1e5d3a6ddafdc2c73fb5809db04376d4b6a2d))
+
 ## 1.0.0 (2026-06-21)
 
 
