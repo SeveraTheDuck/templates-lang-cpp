@@ -10,16 +10,42 @@ function(setup_project_options)
 
   target_compile_options(
     project_options
-    INTERFACE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:
-              -Wall
-              -Wextra
-              -Werror
-              -Wpedantic
-              -Wconversion
-              -Wshadow
-              -fstack-protector-strong
-              $<$<NOT:$<CONFIG:Release>>:-fno-omit-frame-pointer>
-              >
+    INTERFACE
+          -Wall
+          -Wextra
+          -Wpedantic
+          -Wshadow
+          -Wconversion
+          -Wsign-conversion
+          -Wcast-qual
+          -Wcast-align
+          -Wold-style-cast
+          -Wnon-virtual-dtor
+          -Woverloaded-virtual
+          -Wunused-parameter
+          -Wzero-as-null-pointer-constant
+          -Wextra-semi
+          -Wsuggest-override
+          -Wdouble-promotion
+          -Wformat=2
+          -Wredundant-decls
+          -Wmissing-declarations
+
+          # -- gcc only --
+          $<$<CXX_COMPILER_ID:GNU>:-Wuseless-cast>
+          $<$<CXX_COMPILER_ID:GNU>:-Wduplicated-cond>
+          $<$<CXX_COMPILER_ID:GNU>:-Wduplicated-branches>
+          $<$<CXX_COMPILER_ID:GNU>:-Wlogical-op>
+          $<$<CXX_COMPILER_ID:GNU>:-Wnull-dereference>
+
+          # -- clang only --
+          $<$<CXX_COMPILER_ID:Clang>:-Wshadow-all>
+          $<$<CXX_COMPILER_ID:Clang>:-Wconditional-uninitialized>
+          $<$<CXX_COMPILER_ID:Clang>:-Wcomma>
+          $<$<CXX_COMPILER_ID:Clang>:-Wloop-analysis>
+          $<$<CXX_COMPILER_ID:Clang>:-Wunreachable-code>
+          $<$<CXX_COMPILER_ID:Clang>:-Wheader-hygiene>
+          $<$<CXX_COMPILER_ID:Clang>:-Wdocumentation>
   )
 
   target_compile_definitions(
